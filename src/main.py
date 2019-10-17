@@ -80,4 +80,5 @@ if __name__ == "__main__":
     _start = time.time()
     main()
     print("Comsume %s requests took %s seconds"% (TO_PRODUCE, (time.time() - _start)))
+    print("Throughput %s Successful %s requests/s"% (TO_PRODUCE, (TO_PRODUCE / time.time())))
     print("End Program !")
