@@ -7,7 +7,7 @@ import queue
 logging.basicConfig(level=logging.DEBUG,
                     format='(%(threadName)-9s) %(message)s',)
 
-BUF_SIZE = 10
+BUF_SIZE = 1000
 q = queue.Queue(BUF_SIZE)
 
 class ProducerThread(threading.Thread):
@@ -50,6 +50,6 @@ if __name__ == '__main__':
     c = ConsumerThread(name='consumer')
 
     p.start()
-    time.sleep(2)
+    time.sleep(1)
     c.start()
-    time.sleep(2)
+    time.sleep(1)
