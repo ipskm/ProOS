@@ -4,10 +4,14 @@ import threading
 import time
 import collections
 
-TO_PRODUCE = 1000
-BUFFER_SIZE = 10
-PRODUCERS = 2
-CONSUMERS = 2
+req = input("Enter value of requsts : ")
+bufsz = input("Enter size of buffers : ")
+prod = input("Enter the threads of producer : ")
+cons = input("Enter the threads of consumer : ")
+TO_PRODUCE = int(req)
+BUFFER_SIZE = int(bufsz)
+PRODUCERS = int(prod)
+CONSUMERS = int(cons)
 
 class ProducerConsumer(object):
     def __init__(self, size):
@@ -22,7 +26,7 @@ class ProducerConsumer(object):
             self.buffer.append(data)
         self.notEmpty.release()
 
-    def take(self):
+    def remove(self):
         self.notEmpty.acquire()
         with self.mutex:
             data = self.buffer.popleft()
@@ -38,13 +42,15 @@ def producer(buffer):
         data = "{} i: {}".format(id, i)
         buffer.append(data)
 
+
 def consumer(buffer):
     id = threading.current_thread().name
     print("Consumer {}".format(id))
 
     for i in range(TO_PRODUCE):
-        data = buffer.take()
+        data = buffer.remove()
         print("{} read: {}".format(id, data))
+
 
 
 def main():
@@ -54,6 +60,7 @@ def main():
     for i in range(CONSUMERS):
         c = threading.Thread(target=consumer, args=(buffer,))
         threads.append(c)
+
 
     for i in range(PRODUCERS):
         p = threading.Thread(target=producer, args=(buffer,))
@@ -67,8 +74,10 @@ def main():
     for t in threads:
         t.join()
 
-    print("End")
-
 
 if __name__ == "__main__":
+    print("Start Program !")
+    _start = time.time()
     main()
+    print("Comsume %s requests took %s seconds"% (TO_PRODUCE, (time.time() - _start)))
+    print("End Program !")
