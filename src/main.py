@@ -1,55 +1,54 @@
-import threading
+import multiprocessing as mp  
 import time
-import logging
-import random
-import queue
 
-logging.basicConfig(level=logging.DEBUG,
-                    format='(%(threadName)-9s) %(message)s',)
+def worker(queue, kafka_queue):  
+    while True:
+        msg = queue.get()         # Read from the queue and do nothing
+        print('Processing %s (MP: %s) ' % (msg, mp.current_process().name))
+        time.sleep(0.01)
+        kafka_queue.put(msg)
+        queue.task_done()
 
-BUF_SIZE = 1000
-q = queue.Queue(BUF_SIZE)
+def send_kafka(queue):  
+    while True:
+        msg = queue.get()
+        print('Kafka sending %s' % msg)
+        queue.task_done()
 
-class ProducerThread(threading.Thread):
-    def __init__(self, group=None, target=None, name=None,
-                 args=(), kwargs=None, verbose=None):
-        super(ProducerThread,self).__init__()
-        self.target = target
-        self.name = name
 
-    def run(self):
-        while True:
-            if not q.full():
-                item = random.randint(1,10)
-                q.put(item)
-                logging.debug('Putting ' + str(item)  
-                              + ' : ' + str(q.qsize()) + ' items in queue')
-                time.sleep(random.random())
-        return
+def writer(count, queue):  
+    ## Write to the queue
+    for ii in range(0, count):
+        print('Writing %s (MP: %s)' % (ii, mp.current_process().name))
+        queue.put(ii)             # Write 'count' numbers into the queue
+        time.sleep(0.001)
 
-class ConsumerThread(threading.Thread):
-    def __init__(self, group=None, target=None, name=None,
-                 args=(), kwargs=None, verbose=None):
-        super(ConsumerThread,self).__init__()
-        self.target = target
-        self.name = name
-        return
+if __name__=='__main__':  
+    count = 1000
 
-    def run(self):
-        while True:
-            if not q.empty():
-                item = q.get()
-                logging.debug('Getting ' + str(item) 
-                              + ' : ' + str(q.qsize()) + ' items in queue')
-                time.sleep(random.random())
-        return
+    # initialize queues
+    queue = mp.JoinableQueue()   # this is where we are going to store input data
+    kafka_queue = mp.JoinableQueue()  # this where we are gonna push them out
 
-if __name__ == '__main__':
-    
-    p = ProducerThread(name='producer')
-    c = ConsumerThread(name='consumer')
+    # create 4 processes, which takes queues as arguments
+    # the data will get in and out through the queues
+    # daemonize it
+    processes = []
+    for i in range(4):
+        worker_process = mp.Process(target=worker, args=(queue, kafka_queue), daemon=True, name='worker_process_{}'.format(i))
+        worker_process.start()        # Launch reader() as a separate python process
+        processes.append(worker_process)
 
-    p.start()
-    time.sleep(1)
-    c.start()
-    time.sleep(1)
+    print([x.name for x in processes])
+
+    # this process simulates sending processed data out 
+    kafka_process = mp.Process(target=send_kafka, args=(kafka_queue,), daemon=True, name='kafka_process')
+    kafka_process.start()
+
+
+    _start = time.time()
+    writer(count, queue)    # Send a lot of stuff for workers tasks
+    # wait till everything is processed
+    queue.join()
+    kafka_queue.join()
+    print( "Sending %s numbers to Queue() took %s seconds" % (count, (time.time() - _start)))
