@@ -3,7 +3,7 @@ typedef int buffer_item;
 #define BUFFER_SIZE 5
 
 /* main.c */
-#include <zconf.h>
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <pthread.h>

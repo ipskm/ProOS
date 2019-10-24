@@ -1,20 +1,16 @@
+
 #include <pthread.h>
 #include <stdio.h>
+#include <zconf.h>
 
 #define PRODUCER_COUNT 4
 #define CONSUMER_COUNT 4
 #define THREAD_COUNT (PRODUCER_COUNT + CONSUMER_COUNT)
-#define WORK_ITERS 1000
-#define WORK_COUNT 1000
+#define WORK_ITERS 10000
+#define WORK_COUNT 10000
 
 #define QUEUE_SIZE 64
 
-#ifdef __unix__
-# include <unistd.h>
-#elif defined _WIN32
-# include <windows.h>
-#define sleep(x) Sleep(1000 * (x))
-#endif
 // Let's go the easy way and keep a gap between head and tail when full.
 static pthread_mutex_t queue_head_lock = PTHREAD_MUTEX_INITIALIZER;
 static volatile int queue_head = 1;
@@ -129,7 +125,7 @@ static void *consumer(void *data_ptr)
         pthread_mutex_unlock(&queue_tail_lock);
 
         result += do_work(data);
-        printf("[%d] consumed %d\n", thread_id, data);
+        //printf("[%d] consumed %d\n", thread_id, data);
     }
 
     printf("[%d] finished consuming result=%f\n", thread_id, result);
