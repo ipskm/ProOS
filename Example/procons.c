@@ -11,6 +11,12 @@ typedef int buffer_item;
 
 #define RAND_DIVISOR 100000000
 #define TRUE 1
+#ifdef __unix__
+# include <unistd.h>
+#elif defined _WIN32
+# include <windows.h>
+#define sleep(x) Sleep(1000 * (x))
+#endif
 
 /* The mutex lock */
 pthread_mutex_t mutex;
@@ -66,7 +72,7 @@ void *producer(void *param) {
       pthread_mutex_lock(&mutex);
 
       if(insert_item(item)) {
-         fprintf(stderr, " Producer report error condition\n");
+         printf(stderr, " Producer report error condition\n");
       }
       else {
          printf("producer produced %d\n", item);
@@ -92,7 +98,7 @@ void *consumer(void *param) {
       /* aquire the mutex lock */
       pthread_mutex_lock(&mutex);
       if(remove_item(&item)) {
-         fprintf(stderr, "Consumer report error condition\n");
+         printf(stderr, "Consumer report error condition\n");
       }
       else {
          printf("consumer consumed %d\n", item);
