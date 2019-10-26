@@ -14,20 +14,25 @@
 using namespace std;
 
 // print function for "thread safe" printing using a stringstream
-void print(ostream& s) { cout << s.rdbuf(); cout.flush(); s.clear(); }
+void print(ostream &s)
+{
+    cout << s.rdbuf();
+    cout.flush();
+    s.clear();
+}
 
 //
 //      Constants
 //
-const int num_producers = 5;
-const int num_consumers = 10;
+const int num_producers = 10;              // number of producer thread
+const int num_consumers = 10;              // number of consumer thread
 const int producer_delay_to_produce = 10;   // in miliseconds
-const int consumer_delay_to_consume = 30;   // in miliseconds
+const int consumer_delay_to_consume = 10;   // in miliseconds
 
 const int consumer_max_wait_time = 200;     // in miliseconds - max time that a consumer can wait for a product to be produced.
 
-const int max_production = 10;              // When producers has produced this quantity they will stop to produce
-const int max_products = 10;                // Maximum number of products that can be stored
+const int max_request = 1000;              // When producers has produced this quantity they will stop to produce
+const int buffer_size = 10;               // Maximum number of products that can be stored in buffers
 
 //
 //      Variables
@@ -49,11 +54,11 @@ void produce(int producer_id)
     unique_lock<mutex> lock(xmutex);
     int product;
 
-    is_not_full.wait(lock, [] { return products.size() != max_products; });
+    is_not_full.wait(lock, [] { return products.size() != buffer_size; });
     product = products.size();
     products.push(product);
 
-    print(stringstream() << "Producer " << producer_id << " produced " << product << "\n");
+    // print(stringstream() << "Producer " << producer_id << " produced " << product << "\n");
     is_not_empty.notify_all();
 }
 
@@ -63,13 +68,13 @@ void consume(int consumer_id)
     unique_lock<mutex> lock(xmutex);
     int product;
 
-    if(is_not_empty.wait_for(lock, chrono::milliseconds(consumer_max_wait_time),
-                             [] { return products.size() > 0; }))
+    if (is_not_empty.wait_for(lock, chrono::milliseconds(consumer_max_wait_time),
+                              [] { return products.size() > 0; }))
     {
         product = products.front();
         products.pop();
 
-        print(stringstream() << "Consumer " << consumer_id << " consumed " << product << "\n");
+        // print(stringstream() << "Consumer " << consumer_id << " consumed " << product << "\n");
         is_not_full.notify_all();
     }
 }
@@ -78,7 +83,7 @@ void consume(int consumer_id)
 void producer(int id)
 {
     ++num_producers_working;
-    for(int i = 0; i < max_production; ++i)
+    for (int i = 0; i < max_request; ++i)
     {
         produce(id);
         this_thread::sleep_for(chrono::milliseconds(producer_delay_to_produce));
@@ -92,9 +97,10 @@ void producer(int id)
 void consumer(int id)
 {
     // Wait until there is any producer working
-    while(num_producers_working == 0) this_thread::yield();
+    while (num_producers_working == 0)
+        this_thread::yield();
 
-    while(num_producers_working != 0 || products.size() > 0)
+    while (num_producers_working != 0 || products.size() > 0)
     {
         consume(id);
         this_thread::sleep_for(chrono::milliseconds(consumer_delay_to_consume));
@@ -111,14 +117,14 @@ int main()
     vector<thread> producers_and_consumers;
 
     // Create producers
-    for(int i = 0; i < num_producers; ++i)
+    for (int i = 0; i < num_producers; ++i)
         producers_and_consumers.push_back(thread(producer, i));
 
     // Create consumers
-    for(int i = 0; i < num_consumers; ++i)
+    for (int i = 0; i < num_consumers; ++i)
         producers_and_consumers.push_back(thread(consumer, i));
 
     // Wait for consumers and producers to finish
-    for(auto& t : producers_and_consumers)
+    for (auto &t : producers_and_consumers)
         t.join();
 }
