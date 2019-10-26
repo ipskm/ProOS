@@ -59,7 +59,7 @@ void produce(int producer_id)
     product = products.size();
     products.push(product);
 
-    // print(stringstream() << "Producer " << producer_id << " produced " << product << "\n");
+    // print(stringstream() << "Producer " << producer_id << " produced " << product << "\n"); // <-- uncomment to display producer produce product
     is_not_empty.notify_all();
 }
 
@@ -75,7 +75,7 @@ void consume(int consumer_id)
         product = products.front();
         products.pop();
 
-        // print(stringstream() << "Consumer " << consumer_id << " consumed " << product << "\n");
+        // print(stringstream() << "Consumer " << consumer_id << " consumed " << product << "\n"); // <-- uncomment to display consumers consume product
         is_not_full.notify_all();
     }
 }
@@ -90,7 +90,7 @@ void producer(int id)
         this_thread::sleep_for(chrono::milliseconds(producer_delay_to_produce));
     }
 
-    // print(stringstream() << "Producer " << id << " has exited\n");
+    // print(stringstream() << "Producer " << id << " has exited\n"); // <-- uncomment to display end producers thread
     --num_producers_working;
 }
 
@@ -107,7 +107,7 @@ void consumer(int id)
         this_thread::sleep_for(chrono::milliseconds(consumer_delay_to_consume));
     }
 
-    // print(stringstream() << "Consumer " << id << " has exited\n");
+    // print(stringstream() << "Consumer " << id << " has exited\n"); // <-- uncomment to display end consumers thread
 }
 
 //
