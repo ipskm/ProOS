@@ -5,7 +5,7 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
-#include <stack>
+#include <queue>
 #include <thread>
 #include <mutex>
 #include <atomic>
@@ -33,11 +33,11 @@ const int max_products = 10;                // Maximum number of products that c
 //      Variables
 //
 atomic<int> num_producers_working(0);       // When there's no producer working the consumers will stop, and the program will stop.
-stack<int> products;                        // The products stack, here we will store our products
+queue<int> products;                        // The products queue, here we will store our products
 mutex xmutex;                               // Our mutex, without this mutex our program will cry
 
-condition_variable is_not_full;             // to indicate that our stack is not full between the thread operations
-condition_variable is_not_empty;            // to indicate that our stack is not empty between the thread operations
+condition_variable is_not_full;             // to indicate that our queue is not full between the thread operations
+condition_variable is_not_empty;            // to indicate that our queue is not empty between the thread operations
 
 //
 //      Functions
@@ -66,7 +66,7 @@ void consume(int consumer_id)
     if(is_not_empty.wait_for(lock, chrono::milliseconds(consumer_max_wait_time),
                              [] { return products.size() > 0; }))
     {
-        product = products.top();
+        product = products.front();
         products.pop();
 
         print(stringstream() << "Consumer " << consumer_id << " consumed " << product << "\n");
