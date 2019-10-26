@@ -11,6 +11,7 @@
 #include <atomic>
 #include <condition_variable>
 #include <chrono>
+#include <bits/stdc++.h>
 using namespace std;
 
 // print function for "thread safe" printing using a stringstream
@@ -24,25 +25,25 @@ void print(ostream &s)
 //
 //      Constants
 //
-const int num_producers = 10;              // number of producer thread
-const int num_consumers = 10;              // number of consumer thread
-const int producer_delay_to_produce = 10;   // in miliseconds
-const int consumer_delay_to_consume = 10;   // in miliseconds
+const int num_producers = 10;             // number of producer thread
+const int num_consumers = 10;             // number of consumer thread
+const int producer_delay_to_produce = 10; // in miliseconds
+const int consumer_delay_to_consume = 10; // in miliseconds
 
-const int consumer_max_wait_time = 200;     // in miliseconds - max time that a consumer can wait for a product to be produced.
+const int consumer_max_wait_time = 200; // in miliseconds - max time that a consumer can wait for a product to be produced.
 
-const int max_request = 1000;              // When producers has produced this quantity they will stop to produce
-const int buffer_size = 10;               // Maximum number of products that can be stored in buffers
+const int max_request = 100; // When producers has produced this quantity they will stop to produce
+const int buffer_size = 10;  // Maximum number of products that can be stored in buffers
 
 //
 //      Variables
 //
-atomic<int> num_producers_working(0);       // When there's no producer working the consumers will stop, and the program will stop.
-queue<int> products;                        // The products queue, here we will store our products
-mutex xmutex;                               // Our mutex, without this mutex our program will cry
+atomic<int> num_producers_working(0); // When there's no producer working the consumers will stop, and the program will stop.
+queue<int> products;                  // The products queue, here we will store our products
+mutex xmutex;                         // Our mutex, without this mutex our program will cry
 
-condition_variable is_not_full;             // to indicate that our queue is not full between the thread operations
-condition_variable is_not_empty;            // to indicate that our queue is not empty between the thread operations
+condition_variable is_not_full;  // to indicate that our queue is not full between the thread operations
+condition_variable is_not_empty; // to indicate that our queue is not empty between the thread operations
 
 //
 //      Functions
@@ -89,7 +90,7 @@ void producer(int id)
         this_thread::sleep_for(chrono::milliseconds(producer_delay_to_produce));
     }
 
-    print(stringstream() << "Producer " << id << " has exited\n");
+    // print(stringstream() << "Producer " << id << " has exited\n");
     --num_producers_working;
 }
 
@@ -106,7 +107,7 @@ void consumer(int id)
         this_thread::sleep_for(chrono::milliseconds(consumer_delay_to_consume));
     }
 
-    print(stringstream() << "Consumer " << id << " has exited\n");
+    // print(stringstream() << "Consumer " << id << " has exited\n");
 }
 
 //
@@ -114,6 +115,12 @@ void consumer(int id)
 //
 int main()
 {
+    // Record Start Time //
+    auto start = chrono::high_resolution_clock::now();
+    // unsync the I/O of C and C++.
+    ios_base::sync_with_stdio(false);
+
+    // Start Producer Consumer Program //
     vector<thread> producers_and_consumers;
 
     // Create producers
@@ -127,4 +134,22 @@ int main()
     // Wait for consumers and producers to finish
     for (auto &t : producers_and_consumers)
         t.join();
+
+    // End Producer Comsumer Program //
+
+    // Record End time //
+
+    auto end = chrono::high_resolution_clock::now();
+
+    // Calculating total time taken by the program.
+    double time_taken =
+        chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+
+    time_taken *= 1e-9; // Chang nanosecond to second
+
+    cout << "Time taken by program is : " << fixed
+         << time_taken << setprecision(9);
+    cout << " seconds." << endl;
+    
+    return 0;
 }
