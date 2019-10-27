@@ -23,7 +23,7 @@
 <li> 1.2.3	ขนาดของบัฟเฟอร์ (N)</li>
 <li> 1.2.4	จำนวนรายการที่จะผลิตทั้งหมด (ไม่เกิน 1,000 ล้าน requests)</li> </ul></ul>
 <b><u>ตัวอย่าง</u></b> ทดสอบโปรแกรมโดยให้มีเทรดผลิต 20 เทรด, มีเทรดเรียกใช้ 30 เทรด, บัฟเฟอร์ขนาด 1000 รายการ และ ผลิตรายการทั้งหมด 100000 รายการ<br> # buff 20 30 1000 100000<br>
-Producers 20,<br> Consumers 30<br> Buffer size 1000 <br>Requests 100000<br>
+Producers 20, Consumers 30<br> Buffer size 1000 <br>Requests 100000<br>
 Successfully consumed 95401 requests (95.4%)<br>
 Elapsed Time: 31.40 s<br>
 Throughput: 3038.25 successful requests/s<br>
