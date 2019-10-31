@@ -10,7 +10,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// print function for "thread safe" printing using a stringstream
+// print function for "thread safe" printing ใช้ a stringstream
 // void print(ostream &s)
 // {
 //     cout << s.rdbuf();
@@ -21,8 +21,8 @@ using namespace std;
 //
 //      Constants
 //
-const int num_adder = 10;             // number of adder thread
-const int num_remover = 10;             // number of remover thread
+const int num_adder = 10;             // จำนวนเทรดของ adder
+const int num_remover = 10;             // จำนวนเทรดของ remover
 const int delay_for_add = 10; // in miliseconds
 const int delay_for_remove = 10; // in miliseconds
 
