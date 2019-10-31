@@ -15,12 +15,12 @@
 using namespace std;
 
 // print function for "thread safe" printing using a stringstream
-void print(ostream &s)
-{
-    cout << s.rdbuf();
-    cout.flush();
-    s.clear();
-}
+// void print(ostream &s)
+// {
+//     cout << s.rdbuf();
+//     cout.flush();
+//     s.clear();
+// }
 
 //
 //      Constants
