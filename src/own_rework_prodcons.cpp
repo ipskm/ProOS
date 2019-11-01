@@ -148,7 +148,7 @@ int main()
         chrono::duration_cast<chrono::nanoseconds>(end - start).count();
 
     time_taken *= 1e-9; // Chang nanosecond to second
-    print(stringstream() << "Time taken by program is : " << fixed << time_taken << setprecision(9) << "seconds.\n");
+    print(stringstream() << "Time taken by program is : " << fixed << time_taken << setprecision(9) << " seconds.\n");
     
     // cout << "Time taken by program is : " << fixed
     //      << time_taken << setprecision(9);
