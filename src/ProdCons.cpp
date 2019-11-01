@@ -69,43 +69,43 @@ void remove_items(int remove_id)
 {
     unique_lock<mutex> lock(xmutex);
     int item;
-
+    //ตรวจสอบว่าคิวนั้นไม่ว่างเปล่า
     if (is_not_empty.wait_for(lock, chrono::milliseconds(max_remove_wait_time),
                               [] { return items.size() > 0; }))
     {
-        item = items.front();
-        items.pop();
+        item = items.front(); //เลือกไอเทมที่เว็กเตอร์ชี้อยู่
+        items.pop(); //ลบไอเทมออกจากคิว
 
         // print(stringstream() << "remove_ " << remove_id << " remove_itemsd " << item << "\n"); // <-- เลิกคอมเม้นเพื่อดูผล
-        is_not_full.notify_all();
+        is_not_full.notify_all(); //เมื่อคิวไม่เต็มแล้วส่งสัญญาณออกไป
     }
 }
 
-//      append_ function, this is the body of a append_ thread
+//      append_ ฟังก์ชัน รูปร่างหน้าตาของ append_
 void append_(int id)
 {
-    ++num_append_working;
+    ++num_append_working; //บวกค่าของ append_working แล้วทำการเพิ่มคิวลงข้อมูล
     for (int i = 0; i < max_request; ++i)
     {
         add_items(id);
-        this_thread::sleep_for(chrono::milliseconds(delay_for_add));
+        this_thread::sleep_for(chrono::milliseconds(delay_for_add));//เมื่อเพิ่มเสร็จสลับคิวไปให้ตัวใหม่ได้ทำ
     }
 
     // print(stringstream() << "append_ " << id << " has exited\n"); // <-- uncomment to display end append_s thread
-    --num_append_working;
+    --num_append_working; //ลบค่าของ append_working ออก
 }
 
-//      remove_ function, this is the body of a remove_ thread
+//      remove_ ฟังก์ชัน หน้าตาของ remove 
 void remove_(int id)
 {
-    // Wait until there is any append_ working
+    // รอจนกว่าไม่มี append ทำงาน
     while (num_append_working == 0)
-        this_thread::yield();
+        this_thread::yield(); //รอการทำงานซักครู่
 
     while (num_append_working != 0 || items.size() > 0)
     {
-        remove_items(id);
-        this_thread::sleep_for(chrono::milliseconds(delay_for_remove));
+        remove_items(id);//ลบไอเทมออก
+        this_thread::sleep_for(chrono::milliseconds(delay_for_remove));//ปิดตัวเองลงไปให้ตัวอื่นมาทำต่อ
     }
 
     // print(stringstream() << "remove_ " << id << " has exited\n"); // <-- uncomment to display end remove_s thread
@@ -116,38 +116,38 @@ void remove_(int id)
 //
 int main()
 {
-    // Record Start Time //
+    //เริ่มบันทึกเวลาที่โปรแกรมรัน
     auto start = chrono::high_resolution_clock::now();
-    // unsync the I/O of C and C++.
+    // ไม่นับค่าเวลาของ i/o
     ios_base::sync_with_stdio(false);
 
-    // Start append_ remove_ Program //
+    // เริ่มการทำงานโปรแกรม
     vector<thread> append_s_and_remove_s;
 
-    // Create append_ thread
+    // สร้างเทรด append
     for (int i = 0; i < num_append_; ++i)
         append_s_and_remove_s.push_back(thread(append_, i));
 
-    // Create remove_ thread
+    // สร้างเทรด remove
     for (int i = 0; i < num_remove; ++i)
         append_s_and_remove_s.push_back(thread(remove_, i));
 
-    // Wait for remove_s and append_s to finish
+    // รอจนกว่าสร้างเสร็จแล้วให้เริ่มการทำงาน
     for (auto &t : append_s_and_remove_s)
         t.join();
 
-    // End append_ Comsumer Program //
+    // จบโปรแกรม
 
-    // Record End time //
+    // บันทึกค่าเวลาที่ทำงานเสร็จ
 
     auto end = chrono::high_resolution_clock::now();
 
-    // Calculating total time taken by the program.
+    // คำนวณเวลาทั้งหมด
     double time_taken =
         chrono::duration_cast<chrono::nanoseconds>(end - start).count();
 
-    time_taken *= 1e-9; // Chang nanosecond to second
-    print(stringstream() << "Time taken by program is : " << fixed << time_taken << setprecision(9) << " seconds.\n");
+    time_taken *= 1e-9; // เปลี่ยนค่าจากนาโนวินาทีเป็นวินาที
+    print(stringstream() << "Time taken by program is : " << fixed << time_taken << setprecision(9) << " seconds.\n"); //แสดงผผลค่าเวลา
     
     // cout << "Time taken by program is : " << fixed
     //      << time_taken << setprecision(9);
