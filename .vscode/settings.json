@@ -3,6 +3,7 @@
     "files.associations": {
         "stdlib.h": "c",
         "condition_variable": "cpp",
-        "chrono": "cpp"
+        "chrono": "cpp",
+        "stdio.h": "c"
     }
 }
