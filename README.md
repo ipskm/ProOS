@@ -1,14 +1,13 @@
 # งานกลุ่มวิชาระบบปฏิบัติการ ชั้นปีที่ 3 เทอมต้น ปีการศึกษา 2562
 ---
-## โจทย์ปัญหา
+## หลักการออกแบบ
 ---
-จากไฟล์เอกสารงานที่ได้รับมอบหมายมา [PDF File](https://github.com/ipskm/ProOS/blob/master/KU%20Assignment%201.pdf) มีรายละเอียดดังนี้
-
-```
+##### โครงสร้างข้อมูลแบบคิว
+```C
 struct Queue 
 { 
-    int front, rear, size; 
-    unsigned capacity; 
-    int* array; 
+    int front, rear, size; //ตัวแปรไว้กำหนดค่าต่าง ๆ 
+    unsigned capacity; //ขนาดของคิว
+    int* array; //
 }; 
 ```

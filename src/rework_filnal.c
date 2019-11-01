@@ -76,8 +76,10 @@ int rear(struct Queue* queue)
 int main() 
 { 
     struct Queue* queue = createQueue(BUFF_SZ); 
-    add_item(queue, 10); //to add value
-    remove_item(queue); //to remove value
-  
+    /*  add_item(queue, 10); //to add value
+        remove_item(queue); //to remove value
+        front(queue); //front value
+        rear(queue); //rear value
+    */
     return 0; 
 } 
