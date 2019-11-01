@@ -17,22 +17,22 @@
 using namespace std;
 
 // print function for "thread safe" printing ใช้ a stringstream
-// void print(ostream &s)
-// {
-//     cout << s.rdbuf();
-//     cout.flush();
-//     s.clear();
-// }
+void print(ostream &s)
+{
+    cout << s.rdbuf();
+    cout.flush();
+    s.clear();
+}
 
 //
 //      Constants
 //
-const int num_adder = 10;             // จำนวนเทรดของ adder
+const int num_adder = 10;               // จำนวนเทรดของ adder
 const int num_remover = 10;             // จำนวนเทรดของ remover
-const int delay_for_add = 10; // in miliseconds
-const int delay_for_remove = 10; // in miliseconds
+const int delay_for_add = 10;           // in miliseconds
+const int delay_for_remove = 10;        // in miliseconds
 
-const int remover_max_wait_time = 200; // in miliseconds - max time that a remover can wait for a item to be add_itemsd.
+const int remover_max_wait_time = 200;  // in miliseconds - max time that a remover can wait for a item to be add_itemsd.
 
 const int max_request = 100; // When adders has add_itemsd this quantity they will stop to add_items
 const int buffer_size = 10;  // Maximum number of items that can be stored in buffers
@@ -40,12 +40,12 @@ const int buffer_size = 10;  // Maximum number of items that can be stored in bu
 //
 //      Variables
 //
-atomic<int> num_removers_working(0); // When there's no adder working the removers will stop, and the program will stop.
-queue<int> items;                  // The items queue, here we will store our items
-mutex xmutex;                         // Our mutex, without this mutex our program will cry
+atomic<int> num_removers_working(0);    // When there's no adder working the removers will stop, and the program will stop.
+queue<int> items;                       // The items queue, here we will store our items
+mutex xmutex;                           // Our mutex, without this mutex our program will cry
 
-condition_variable is_not_full;  // to indicate that our queue is not full between the thread operations
-condition_variable is_not_empty; // to indicate that our queue is not empty between the thread operations
+condition_variable is_not_full;     // to indicate that our queue is not full between the thread operations
+condition_variable is_not_empty;    // to indicate that our queue is not empty between the thread operations
 
 //
 //      Functions
@@ -148,10 +148,11 @@ int main()
         chrono::duration_cast<chrono::nanoseconds>(end - start).count();
 
     time_taken *= 1e-9; // Chang nanosecond to second
-
-    cout << "Time taken by program is : " << fixed
-         << time_taken << setprecision(9);
-    cout << " seconds." << endl;
+    print(stringstream() << "Time taken by program is : " << fixed << time_taken << setprecision(9) << "seconds.\n");
+    
+    // cout << "Time taken by program is : " << fixed
+    //      << time_taken << setprecision(9);
+    // cout << " seconds." << endl;
     
     return 0;
 }
