@@ -30,11 +30,11 @@ Throughput: 3038.25 successful requests/s<br>
 โดยงานนี้มีจุดประสงค์หลักให้อัตรา Throughput มีค่าสูงสุด <Br>
 Assignment นี้จะเป็นงานกลุ่มโดยกลุ่มหนึ่งจะมีจำนวน 11-12 คน (4 กลุ่ม)<bR><br>
 <hr>
-```
+~~~
 struct Queue 
 { 
     int front, rear, size; 
     unsigned capacity; 
     int* array; 
 }; 
-```
+~~~
