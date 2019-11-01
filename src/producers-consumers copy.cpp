@@ -1,5 +1,5 @@
 /*
-    to compile use this command : g++ <filename.cpp> -o <filename>
+    to compile use this command : gcc <filename.cpp> -o <filename>
     software to compile : MinGW-W64 
     link to download : https://sourceforge.net/projects/mingw-w64/
 */
