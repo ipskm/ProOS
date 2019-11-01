@@ -125,11 +125,11 @@ int main()
     // Start append_ remove_ Program //
     vector<thread> append_s_and_remove_s;
 
-    // Create append_s
+    // Create append_ thread
     for (int i = 0; i < num_append_; ++i)
         append_s_and_remove_s.push_back(thread(append_, i));
 
-    // Create remove_s
+    // Create remove_ thread
     for (int i = 0; i < num_remove; ++i)
         append_s_and_remove_s.push_back(thread(remove_, i));
 
