@@ -30,7 +30,7 @@ void print(ostream &s)
 //      ค่าคงที่
 //
 const int num_append_ = 10;      // จำนวนเทรดของ append_
-const int num_remove = 10;       // จำนวนเทรดของ remove_
+const int num_remove_ = 10;       // จำนวนเทรดของ remove_
 const int delay_for_add = 10;    // เวลาสำหรับการเพิ่มข้อมูลลงคิว
 const int delay_for_remove = 10; // เวลาสำหรับการดึงข้อมูลออกจากคิว
 
@@ -135,7 +135,7 @@ int main()
         append_s_and_remove_s.push_back(thread(append_, i));
 
     // สร้างเทรด remove
-    for (int i = 0; i < num_remove; ++i)
+    for (int i = 0; i < num_remove_; ++i)
         append_s_and_remove_s.push_back(thread(remove_, i));
 
     // รอจนกว่าสร้างเสร็จแล้วให้เริ่มการทำงาน
@@ -154,7 +154,7 @@ int main()
 
     time_taken *= 1e-9;                                                                                                // เปลี่ยนค่าจากนาโนวินาทีเป็นวินาที
     print(stringstream() << "Time taken by program is : " << fixed << time_taken << setprecision(9) << " seconds.\n"); //แสดงผผลค่าเวลา
-    cout << "Prod : " << p_count << " Cons : " << c_count << endl;
+    cout << "Prod : " << p_count / num_append_ << " Cons : " << c_count / num_remove_ << endl;
 
     return 0;
 }
