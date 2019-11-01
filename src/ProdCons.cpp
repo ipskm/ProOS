@@ -1,22 +1,24 @@
 /*
-    to compile use this command : g++ <filename.cpp> -o <filename>
-    software to compile : MinGW-W64 
-    link to download : https://sourceforge.net/projects/mingw-w64/
+    คอมไพล์ไฟล์นี้โดยใช้คำสั่ง : g++ ชื่อไฟล์.cpp -o ชื่อโปรแกรมที่ต้องการ
+    รันโปรแกรม : ./ชื่อโปรแกรม
+    คอมไพล์เลอร์ : MinGW-W64 
+    ลิงก์ดาวน์โหลด : https://sourceforge.net/projects/mingw-w64/
+    ติดตั้งและเซตพาร์ธให้เรียบร้อย
 */
+//นำเข้าไลบราลี่ที่จำเป็น
+#include <iostream>         //อินพุทเอาท์พุททั่วไป
+#include <sstream>          //รวมข้อควม
+#include <vector>           //เวกเตอร์
+#include <queue>            //คิว
+#include <thread>           //เทรด
+#include <mutex>            //มิวเทกซ์
+#include <atomic>           //อะตอมิก
+#include <condition_variable>   //ตัวแปรคงที่
+#include <chrono>           //โครโน
+#include <bits/stdc++.h>    //ไลบราลี่ทั่วไป
+using namespace std;  
 
-#include <iostream>
-#include <sstream>
-#include <vector>
-#include <queue>
-#include <thread>
-#include <mutex>
-#include <atomic>
-#include <condition_variable>
-#include <chrono>
-#include <bits/stdc++.h>
-using namespace std;
-
-// print function for "thread safe" printing ใช้ a stringstream
+// print ฟังก์ชั่น สำหรับการแสดงผลโดยใช้ stringstream ฟังก์ชัน
 void print(ostream &s)
 {
     cout << s.rdbuf();
@@ -25,47 +27,44 @@ void print(ostream &s)
 }
 
 //
-//      Constants
+//      ค่าคงที่
 //
 const int num_append_ = 10;               // จำนวนเทรดของ append_
 const int num_remove = 10;             // จำนวนเทรดของ remove_
-const int delay_for_add = 10;           // in miliseconds
-const int delay_for_remove = 10;        // in miliseconds
+const int delay_for_add = 10;           // เวลาสำหรับการเพิ่มข้อมูลลงคิว
+const int delay_for_remove = 10;        // เวลาสำหรับการดึงข้อมูลออกจากคิว
 
-const int max_remove_wait_time = 200;  // in miliseconds - max time that a remove_ can wait for a item to be add_itemsd.
-
-const int max_request = 100; // When append_s has add_itemsd this quantity they will stop to add_items
-const int buffer_size = 10;  // Maximum number of items that can be stored in buffers
+const int max_remove_wait_time = 200;  // เวลาที่มากทีสุดที่การเรียกใช้ remove รอ append
+const int max_request = 100; // เมื่อถึงค่าที่กำหนด add_items จะหยุดการทำงาน
+const int buffer_size = 10;  // ค่าสูงสุดที่คิวสามารถบรรจุได้
 
 //
 //      Variables
 //
-atomic<int> num_append_working(0);    // When there's no append_ working the remove_s will stop, and the program will stop.
-queue<int> items;                       // The items queue, here we will store our items
-mutex xmutex;                           // Our mutex, without this mutex our program will cry
+atomic<int> num_append_working(0);      // เมื่อไม่มี append ทำงาน remove ทำงานเสร็จ ก็จะหยุดโปรแกรม
+queue<int> items;                       // ไอเท็มในคิว
+mutex xmutex;                           // มิวเทกซ์ที่ใช้จัดการการเข้าถึงคิวของเธรดต่าง ๆ เพื่อป้องกันการเรียกใช้งานแบบซ้ำซ้อน
 
-condition_variable is_not_full;     // to indicate that our queue is not full between the thread operations
-condition_variable is_not_empty;    // to indicate that our queue is not empty between the thread operations
+condition_variable is_not_full;     // ตรวจสอบว่าคิวไม่เต็มในระหว่างการทำงานของเทรด
+condition_variable is_not_empty;    // ตรวจสอบว่าคิวไม่ว่างในระหว่างการทำงานของเทรด
 
 //
-//      Functions
+//      ฟังก์ชัน
 //
 
-//      add_items function, append__id will add_items a item
+//      add_item ฟังก์ชัน ที่ถูกเรียกใช้งานโดย เทรดต่าง ๆ ของ append_ เพื่อนำค่าเข้าไปในคิว
 void add_items(int append__id)
 {
-    unique_lock<mutex> lock(xmutex);
+    unique_lock<mutex> lock(xmutex);    //ล็อคมิวเทคเพื่อทำงาน
     int item;
 
-    is_not_full.wait(lock, [] { return items.size() != buffer_size; });
-    item = items.size();
-    items.push(item);
+    is_not_full.wait(lock, [] { return items.size() != buffer_size; }); //ตรวจสอบว่าคิวไม่ได้เต็ม
+    item = items.size(); //เรียกขนาดของคิวปัจจุบัน
+    items.push(item); //เพิ่มค่าลงในคิว
 
-    // print(stringstream() << "append_ " << append__id << " add_itemsd " << item << "\n"); // <-- uncomment to display append_ add_items item
-    is_not_empty.notify_all();
-}
+    // print(stringstream() << "append_ " << append__id << " add_itemsd " << item << "\n"); // <-- เลิกคอมเม้นเพื่อดูผล
 
-//      remove_items function, remove_id will remove_items a item
+//      remove_items ฟังก์ชันที่ถูกเรียกใช้งานโดย เทรดต่าง ๆ ของ remove_ เพื่อนำค่าออกจากคิว
 void remove_items(int remove_id)
 {
     unique_lock<mutex> lock(xmutex);
@@ -77,7 +76,7 @@ void remove_items(int remove_id)
         item = items.front();
         items.pop();
 
-        // print(stringstream() << "remove_ " << remove_id << " remove_itemsd " << item << "\n"); // <-- uncomment to display remove_s remove_items item
+        // print(stringstream() << "remove_ " << remove_id << " remove_itemsd " << item << "\n"); // <-- เลิกคอมเม้นเพื่อดูผล
         is_not_full.notify_all();
     }
 }
