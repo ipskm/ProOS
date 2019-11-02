@@ -4,6 +4,7 @@
         "stdlib.h": "c",
         "condition_variable": "cpp",
         "chrono": "cpp",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "iomanip": "cpp"
     }
 }
