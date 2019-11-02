@@ -153,8 +153,8 @@ int main()
     time_taken *= 1e-9; // เปลี่ยนค่าจากนาโนวินาทีเป็นวินาที
                         //แสดงผลค่าเวลา
     double through_put = (double)c_count / time_taken;
-    double percentage = (c_count / p_count) * 100.0;
-    print(stringstream() << "Producer " << num_append_ << " Consumer " << num_remove_ << "\nBuffer size " << buffer_size << "\n");
+    double percentage = (c_count / max_request) * 100.0;
+    print(stringstream() << "Producer " << num_append_ << " Consumer " << num_remove_ << "\nBuffer size " << buffer_size << "\nRequest " << max_request << "\n");
     print(stringstream() << "Success fully consume " << c_count << " request (" << percentage << "%)\n"); //แสดงผลการนับ
     print(stringstream() << "Elapsed Time : " << fixed << time_taken << setprecision(9) << " seconds.\n");
     print(stringstream() << "Throughput " << through_put << "request/s");
