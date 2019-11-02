@@ -24,5 +24,5 @@ condition_variable is_not_full;
 condition_variable is_not_empty;
 mutex xmutex;
 int main(){
-
+    boost::circular_buffer<int> myringbuf(BUFFER_SIZE);
 }
