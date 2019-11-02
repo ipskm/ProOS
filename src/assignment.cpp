@@ -9,128 +9,56 @@
 #include <iostream>
 #include <mutex>
 #include <thread>
+#include <condition_variable>
 #include <bits/stdc++.h>
+#include <boost/circular_buffer.hpp>
+
 using namespace std;
 
 #define BUFFER_SIZE 10
 #define REQUEST 10
+
+double c_count = 0;
+
+condition_variable is_not_full;
+condition_variable is_not_empty;
 mutex xmutex;
+int main(){
+ // Create a circular buffer with a capacity for 3 integers.
+// Create a circular buffer of capacity 3.
+   boost::circular_buffer<int> cb(3);
+   assert(cb.capacity() == 3);
+   // Check is empty.
+   assert(cb.size() == 0);
+   assert(cb.empty());
 
-struct Queue
-{
-    // Initialize front and rear
-    int rear, front;
+   // Insert some elements into the circular buffer.
+   cb.push_back(1);
+   cb.push_back(2);
 
-    // Circular Queue
-    int size;
-    int *arr;
+   // Assertions to check push_backs have expected effect.
+   assert(cb[0] == 1);
+   assert(cb[1] == 2);
+   assert(!cb.full());
+   assert(cb.size() == 2);
+   assert(cb.capacity() == 3);
 
-    Queue(int s)
-    {
-        front = rear = -1;
-        size = s;
-        arr = new int[s];
-    }
+   // Insert some other elements.
+   cb.push_back(3);
+   cb.push_back(4);
 
-    void add_item(int value);
-    int remove_item();
-    void displayQueue();
-};
+   // Evaluate the sum of all elements.
+   int sum = std::accumulate(cb.begin(), cb.end(), 0);
 
-/* Function to create Circular queue */
-void Queue::add_item(int value)
-{
-    if ((front == 0 && rear == size - 1) ||
-        (rear == (front - 1) % (size - 1)))
-    {
-        printf("\nQueue is Full");
-        return ;
-    }
-
-    else if (front == -1) /* Insert First Element */
-    {
-        front = rear = 0;
-        arr[rear] = value;
-    }
-
-    else if (rear == size - 1 && front != 0)
-    {
-        rear = 0;
-        arr[rear] = value;
-    }
-
-    else
-    {
-        rear++;
-        arr[rear] = value;
-    }
-}
-
-// Function to delete element from Circular Queue
-int Queue::remove_item()
-{
-    if (front == -1)
-    {
-        printf("\nQueue is Empty");
-        return 1;
-    }
-
-    int data = arr[front];
-    arr[front] = -1;
-    if (front == rear)
-    {
-        front = -1;
-        rear = -1;
-    }
-    else if (front == size - 1)
-        front = 0;
-    else
-        front++;
-
-    return data;
-}
-
-// Function displaying the elements
-// of Circular Queue
-void Queue::displayQueue()
-{
-    if (front == -1)
-    {
-        printf("\nQueue is Empty");
-        return;
-    }
-    printf("\nElements in Circular Queue are: ");
-    if (rear >= front)
-    {
-        for (int i = front; i <= rear; i++)
-            printf("%d ", arr[i]);
-    }
-    else
-    {
-        for (int i = front; i < size; i++)
-            printf("%d ", arr[i]);
-
-        for (int i = 0; i <= rear; i++)
-            printf("%d ", arr[i]);
-    }
-}
-
-/* Driver of the program */
-int main()
-{
-    Queue myq(BUFFER_SIZE);
-    for (int i = 0; i < REQUEST; i++)
-    {
-        myq.add_item(i); 
-    }
-    
-    myq.displayQueue();
-    for (int i = 0; i < REQUEST; i++)
-    {
-        myq.remove_item();
-    }
-    
-    
-    myq.displayQueue();
-    return 0;
+   // Assertions to check state.
+   assert(sum == 9);
+   assert(cb[0] == 2);
+   assert(cb[1] == 3);
+   assert(cb[2] == 4);
+   assert(*cb.begin() == 2);
+   assert(cb.front() == 2);
+   assert(cb.back() == 4);
+   assert(cb.full());
+   assert(cb.size() == 3);
+   assert(cb.capacity() == 3);
 }

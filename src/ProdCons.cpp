@@ -29,13 +29,13 @@ void print(ostream &s)
 //
 //      ค่าคงที่
 //
-const int num_append_ = 20;     // จำนวนเทรดของ append_
-const int num_remove_ = 30;     // จำนวนเทรดของ remove_
-const int delay_for_add = 1;    // เวลาสูงสุดสำหรับการเพิ่มข้อมูลลงคิว ในหน่วย นาโนวินาที
-const int delay_for_remove = 1; // เวลาสูงสุดสำหรับการดึงข้อมูลออกจากคิว ในหน่วย นาโนวินาที
+const int num_append_ = 200;     // จำนวนเทรดของ append_
+const int num_remove_ = 300;     // จำนวนเทรดของ remove_
+const int delay_for_add = 500;    // เวลาสูงสุดสำหรับการเพิ่มข้อมูลลงคิว ในหน่วย นาโนวินาที
+const int delay_for_remove = 500; // เวลาสูงสุดสำหรับการดึงข้อมูลออกจากคิว ในหน่วย นาโนวินาที
 
 const int max_remove_wait_time = 100; // เวลาที่มากทีสุดที่การเรียกใช้ remove รอ append
-const int max_request = 100000;       // เมื่อถึงค่าที่กำหนด add_items จะหยุดการทำงาน
+const int max_request = 1000000000;       // เมื่อถึงค่าที่กำหนด add_items จะหยุดการทำงาน
 const int buffer_size = 1000;         // ค่าสูงสุดที่คิวสามารถบรรจุได้
 double c_count = 0;                   //นับค่าการ comsume
 double p_count = 0;                   //นับค่าการผลิต
@@ -74,7 +74,7 @@ void remove_item(int remove_id)
     int item;
     unique_lock<mutex> lock(xmutex);
     //ตรวจสอบว่าคิวนั้นไม่ว่างเปล่า
-    if (is_not_empty.wait_for(lock, chrono::milliseconds(max_remove_wait_time),
+    if (is_not_empty.wait_for(lock, chrono::nanoseconds(max_remove_wait_time),
                               [] { return items.size() > 0; }))
     {
         item = items.front(); //เลือกไอเทมที่เว็กเตอร์ชี้อยู่
