@@ -29,14 +29,14 @@ void print(ostream &s)
 //
 //      ค่าคงที่
 //
-const int num_append_ = 200;     // จำนวนเทรดของ append_
-const int num_remove_ = 300;     // จำนวนเทรดของ remove_
+const int num_append_ = 2;     // จำนวนเทรดของ append_
+const int num_remove_ = 2;     // จำนวนเทรดของ remove_
 const int delay_for_add = 500;    // เวลาสูงสุดสำหรับการเพิ่มข้อมูลลงคิว ในหน่วย นาโนวินาที
 const int delay_for_remove = 500; // เวลาสูงสุดสำหรับการดึงข้อมูลออกจากคิว ในหน่วย นาโนวินาที
 
 const int max_remove_wait_time = 100; // เวลาที่มากทีสุดที่การเรียกใช้ remove รอ append
-const int max_request = 1000000000;       // เมื่อถึงค่าที่กำหนด add_items จะหยุดการทำงาน
-const int buffer_size = 1000;         // ค่าสูงสุดที่คิวสามารถบรรจุได้
+const int max_request = 10;       // เมื่อถึงค่าที่กำหนด add_items จะหยุดการทำงาน
+const int buffer_size = 5;         // ค่าสูงสุดที่คิวสามารถบรรจุได้
 double c_count = 0;                   //นับค่าการ comsume
 double p_count = 0;                   //นับค่าการผลิต
 int i;
@@ -65,7 +65,7 @@ void add_item(int append_id)
 
     items.push(item); //เพิ่มค่าลงในคิว
     p_count++;
-    // print(stringstream() << "Append thread id : " << append_id << " add item " << item << " in buffer.\n"); // <-- เลิกคอมเม้นเพื่อดูผล
+    print(stringstream() << "Append thread id : " << append_id << " add item " << item << " in buffer.\n"); // <-- เลิกคอมเม้นเพื่อดูผล
     is_not_empty.notify_all();
 }
 /*      remove_items ฟังก์ชันที่ถูกเรียกใช้งานโดย เทรดต่าง ๆ ของ remove_ เพื่อนำค่าออกจากคิว */
@@ -80,7 +80,7 @@ void remove_item(int remove_id)
         item = items.front(); //เลือกไอเทมที่เว็กเตอร์ชี้อยู่
         items.pop();          //ลบไอเทมออกจากคิว
         c_count++;
-        // print(stringstream() << "Remove thread id : " << remove_id << " remove " << item << " form buffer.\n"); // <-- เลิกคอมเม้นเพื่อดูผล
+        print(stringstream() << "Remove thread id : " << remove_id << " remove " << item << " form buffer.\n"); // <-- เลิกคอมเม้นเพื่อดูผล
         is_not_full.notify_all(); //เมื่อคิวไม่เต็มแล้วส่งสัญญาณออกไป
     }
 }
@@ -93,9 +93,9 @@ void append_(int id)
     {
         add_item(id);
         // p_count++;
-        this_thread::sleep_for(chrono::milliseconds(delay_for_add)); //เมื่อเพิ่มเสร็จสลับคิวไปให้ตัวใหม่ได้ทำ
+        this_thread::sleep_for(chrono::nanoseconds(delay_for_add)); //เมื่อเพิ่มเสร็จสลับคิวไปให้ตัวใหม่ได้ทำ
     }
-    // print(stringstream() << "Append Thread id : " << id << " was finished.\n"); // <-- uncomment to display end append_s thread
+    print(stringstream() << "Append Thread id : " << id << " was finished.\n"); // <-- uncomment to display end append_s thread
     --num_append_working; //ลบค่าของ append_working ออก
 }
 
@@ -110,10 +110,10 @@ void remove_(int id)
     {
         remove_item(id);
         // c_count++;                                               //ลบไอเทมออก
-        this_thread::sleep_for(chrono::milliseconds(delay_for_remove)); //ปิดตัวเองลงไปให้ตัวอื่นมาทำต่อ
+        this_thread::sleep_for(chrono::nanoseconds(delay_for_remove)); //ปิดตัวเองลงไปให้ตัวอื่นมาทำต่อ
     }
 
-    // print(stringstream() << "Remove thread id : " << id << " was finished.\n"); // <-- uncomment to display end remove_s thread
+    print(stringstream() << "Remove thread id : " << id << " was finished.\n"); // <-- uncomment to display end remove_s thread
 }
 
 //
