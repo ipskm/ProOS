@@ -23,6 +23,17 @@ double c_count = 0;
 condition_variable is_not_full;
 condition_variable is_not_empty;
 mutex xmutex;
+
+boost::circular_buffer<int> myringbuf(BUFFER_SIZE);
+
+void add_item(){
+    int random_num = rand()%100;
+    for(int i; i<REQUEST;i++){
+        myringbuf.push_back(random_num);
+    }
+}
+
 int main(){
-    boost::circular_buffer<int> myringbuf(BUFFER_SIZE);
+    
+
 }
