@@ -35,14 +35,14 @@ const int wait_time = 1;
 atomic<int> num_append_working(0);
 condition_variable is_not_full;
 condition_variable is_not_empty;
-mutex xmutex, ymutex;
+mutex xmutex;
 
 boost::circular_buffer<int> myringbuf(BUFFER_SIZE);
 
 void add_item(int append_id)
 {
     int random_num = rand() % 100;
-    unique_lock<mutex> lock(ymutex);
+    unique_lock<mutex> lock(xmutex);
     is_not_full.wait(lock, [] { return myringbuf.size() != BUFFER_SIZE; });
     myringbuf.push_back(random_num);
     cout << "Append ID : " << append_id << " add " << random_num << endl;
@@ -51,7 +51,7 @@ void add_item(int append_id)
 
 void remove_item(int remove_id)
 {
-    unique_lock<mutex> lock(ymutex);
+    unique_lock<mutex> lock(xmutex);
     int product;
     if (is_not_empty.wait_for(lock, chrono::nanoseconds(wait_time),
                               [] { return myringbuf.size() > 0; }))
