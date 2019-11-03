@@ -25,9 +25,9 @@
 using namespace std;
 
 #define BUFFER_SIZE 1000
-#define REQUEST 100000
-#define PROD 20
-#define CONS 30
+#define REQUEST 500000
+#define PROD 1
+#define CONS 50
 
 int c_count = 0;
 int i = 0;
@@ -53,7 +53,7 @@ void remove_item(int remove_id)
 {
     unique_lock<mutex> lock(xmutex);
     int product;
-    if (is_not_empty.wait_for(lock, chrono::nanoseconds(wait_time),
+    if (is_not_empty.wait_for(lock, chrono::microseconds(wait_time),
                               [] { return myringbuf.size() > 0; }))
     {
         product = myringbuf.front();
@@ -73,7 +73,7 @@ void append_(int id)
         // this_thread::sleep_for(chrono::nanoseconds(wait_time));
         ++i;
     }
-    this_thread::sleep_for(chrono::nanoseconds(wait_time));
+    this_thread::sleep_for(chrono::microseconds(wait_time));
     // cout << "Append Thread id : " << id << " was finished." << endl; // <-- uncomment to display end append_s thread
     --num_append_working;
 }
@@ -87,7 +87,7 @@ void remove_(int id)
     while (num_append_working != 0 || myringbuf.size() > 0)
     {
         remove_item(id);
-        this_thread::sleep_for(chrono::nanoseconds(wait_time));
+        this_thread::sleep_for(chrono::microseconds(wait_time));
     }
     // cout << "Remove thread id : " << id << " was finished." << endl;
 }
