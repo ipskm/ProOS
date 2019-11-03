@@ -139,7 +139,7 @@ void append_(int id)
         
 #### การพิสูจน์คุณสมบัติของ Append
 ***
-ผลการทดสอบคุณสมบัติของ append
+ผลการทดสอบคุณสมบัติของ append  
 ![Flowchart](./img/append.png)
 
 ## เงื่อนไข เเละวิธีการทำงานของ Remove
