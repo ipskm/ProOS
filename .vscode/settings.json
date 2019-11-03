@@ -8,5 +8,6 @@
         "iomanip": "cpp",
         "thread": "cpp",
         "ostream": "cpp"
-    }
+    },
+    "git.ignoreLimitWarning": true
 }

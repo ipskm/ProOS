@@ -4,6 +4,8 @@
     คอมไพล์เลอร์ : MinGW-W64 
     ลิงก์ดาวน์โหลด : https://sourceforge.net/projects/mingw-w64/
     ติดตั้งและเซตพาร์ธให้เรียบร้อย
+    ไลบราลี่ที่จำเป็น : Boost C++ Libraly
+    ลิงก์ดาวน์โหลด : https://www.boost.org/
 */
 
 #include <iostream>
@@ -15,6 +17,10 @@
 #include <chrono>
 #include <bits/stdc++.h>
 #include <boost/circular_buffer.hpp>
+
+//or using this include if you don't install boost libraly//
+// #include "circular_buffer.hpp" //<- uncomment this line
+
 
 using namespace std;
 
