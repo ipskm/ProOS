@@ -16,21 +16,20 @@
 #include <vector>
 #include <chrono>
 #include <bits/stdc++.h>
-#include <boost/circular_buffer.hpp>
+// #include <boost/circular_buffer.hpp>
 
 //or using this include if you don't install boost libraly//
-// #include "circular_buffer.hpp" //<- uncomment this line
+#include "circular_buffer.hpp" //<- uncomment this line
 
 
 using namespace std;
 
-#define BUFFER_SIZE 10
+#define BUFFER_SIZE 1000
 #define REQUEST 1000000
 #define PROD 20
 #define CONS 30
 
-double c_count = 0;
-double c_remove = 0;
+int c_count = 0;
 int i = 0;
 const int wait_time = 1;
 atomic<int> num_append_working(0);
@@ -71,10 +70,10 @@ void append_(int id)
     while (i < REQUEST)
     {
         add_item(id);
-        // this_thread::sleep_for(chrono::nanoseconds(wait_time));
+        this_thread::sleep_for(chrono::nanoseconds(wait_time));
         ++i;
     }
-    this_thread::sleep_for(chrono::nanoseconds(wait_time));
+    // this_thread::sleep_for(chrono::nanoseconds(wait_time));
     --num_append_working;
 }
 
@@ -116,8 +115,6 @@ int main()
         t.join();
     }
 
-    cout << "CONSUME1 : " << c_count << " COMSUME2 : " << c_remove << endl;
-
     auto end = chrono::high_resolution_clock::now();
 
     // Calculating total time taken by the program.
@@ -125,14 +122,16 @@ int main()
         chrono::duration_cast<chrono::nanoseconds>(end - start).count();
 
     time_taken *= 1e-9; // Chang nanosecond to second
-    double through_put = (double)c_count / time_taken;
+    if(c_count > REQUEST) c_count = REQUEST;
+    double through_put = c_count / time_taken;
     double percentage = (c_count / REQUEST) * 100.0;
+    string c_consume = to_string(c_count);
     cout << "Producer " << PROD
          << " Comsumer " << CONS
          << "\nBuffer Size " << BUFFER_SIZE
          << "\nRequest " << REQUEST
          << endl;
-    cout << "Success fully consume " << c_count
+    cout << "Success fully consume " << c_consume
          << " requests. (" << percentage
          << "%)" << endl;
     cout << "Elapsed Time : " << fixed << time_taken

@@ -3,6 +3,8 @@
 ## การทดสอบรันโปรแกรม
 คอมไพล์เลอร์ : Genaral C++ Complier (eg. [MinGW W64](https://sourceforge.net/projects/mingw-w64/)) 
 ไลบราลี่ : [Boost C++ Libralies](https://www.boost.org/users/download/)
+คอมไพล์ : ```g++ src/assignment.cpp -pthread -lpthread -o ```assignment
+รันโปรแกรม : ```./assignment```
 ***
 ## การออกเเบบโปรเเกรม
 ***
@@ -102,13 +104,12 @@ void remove_item(int remove_id)
 void append_(int id)
 {
     ++num_append_working;
-    for (i = 0; i < max_request; i++)
+    while (i < REQUEST)
     {
         add_item(id);
-        // p_count++;
-        this_thread::sleep_for(chrono::nanoseconds(delay_for_add));
+        ++i;
     }
-    print(stringstream() << "Append Thread id : " << id << " was finished.\n");
+    this_thread::sleep_for(chrono::nanoseconds(wait_time));
     --num_append_working;
 }
 ```
