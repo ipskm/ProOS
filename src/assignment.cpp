@@ -25,7 +25,7 @@
 using namespace std;
 
 #define BUFFER_SIZE 1000
-#define REQUEST 1000000
+#define REQUEST 100000
 #define PROD 20
 #define CONS 30
 
@@ -45,7 +45,7 @@ void add_item(int append_id)
     unique_lock<mutex> lock(xmutex);
     is_not_full.wait(lock, [] { return myringbuf.size() != BUFFER_SIZE; });
     myringbuf.push_back(random_num);
-    cout << "Append ID : " << append_id << " add " << random_num << endl;
+    // cout << "Append ID : " << append_id << " add " << random_num << endl;
     is_not_empty.notify_all();
 }
 
@@ -59,7 +59,7 @@ void remove_item(int remove_id)
         product = myringbuf.front();
         myringbuf.pop_front();
         ++c_count;
-        cout << "Remove ID : " << remove_id << " remove " << product << endl;
+        // cout << "Remove ID : " << remove_id << " remove " << product << endl;
         is_not_full.notify_all();
     }
 }
@@ -74,7 +74,7 @@ void append_(int id)
         ++i;
     }
     this_thread::sleep_for(chrono::nanoseconds(wait_time));
-    cout << "Append Thread id : " << id << " was finished.\n" << endl; // <-- uncomment to display end append_s thread
+    // cout << "Append Thread id : " << id << " was finished." << endl; // <-- uncomment to display end append_s thread
     --num_append_working;
 }
 
@@ -89,7 +89,7 @@ void remove_(int id)
         remove_item(id);
         this_thread::sleep_for(chrono::nanoseconds(wait_time));
     }
-    cout << "Remove thread id : " << id << " was finished.\n" << endl;
+    // cout << "Remove thread id : " << id << " was finished." << endl;
 }
 int main()
 {
@@ -137,4 +137,5 @@ int main()
     cout << "Elapsed Time : " << fixed << time_taken
          << setprecision(9) << " Seconds." << endl;
     cout << "Throughput " << through_put << " request/s" << endl;
+    return 0;
 }

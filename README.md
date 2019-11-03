@@ -139,6 +139,8 @@ void append_(int id)
         
 #### การพิสูจน์คุณสมบัติของ Append
 ***
+ผลการทดสอบคุณสมบัติของ append
+![Flowchart](./img/append.png)
 
 ## เงื่อนไข เเละวิธีการทำงานของ Remove
 ฟังก์ชัน remove
@@ -181,7 +183,13 @@ void remove_(int id)
     * ส่งสัญญาณว่าบัฟเฟอร์ไม่เต็มออกไปให้ทุกเทรดที่รอการทำงาน
 4. หากเทรดทำงานจนถึงเวลาที่กำหนดให้หยุดการทำงานของเทรดนั้น ๆ 
 5. แสดงผลการทำงาน
+
+**ผลการทดสอบคุณสมบัติของ remove**
+  
+![Flowchart](./img/remove.png)
 ## ผลการ Run & Result
 ***
+![Flowchart](./img/result.png)
 ## Source code 
 ***
+thsis git repo
