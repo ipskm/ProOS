@@ -45,7 +45,7 @@ void add_item(int append_id)
     unique_lock<mutex> lock(ymutex);
     is_not_full.wait(lock, [] { return myringbuf.size() != BUFFER_SIZE; });
     myringbuf.push_back(random_num);
-    // cout << "Append ID : " << append_id << " add " << random_num << endl;
+    cout << "Append ID : " << append_id << " add " << random_num << endl;
     is_not_empty.notify_all();
 }
 
@@ -59,7 +59,7 @@ void remove_item(int remove_id)
         product = myringbuf.front();
         myringbuf.pop_front();
         ++c_count;
-        // cout << "Remove ID : " << remove_id << " remove " << product << endl;
+        cout << "Remove ID : " << remove_id << " remove " << product << endl;
         is_not_full.notify_all();
     }
 }
@@ -70,10 +70,10 @@ void append_(int id)
     while (i < REQUEST)
     {
         add_item(id);
-        this_thread::sleep_for(chrono::nanoseconds(wait_time));
+        // this_thread::sleep_for(chrono::nanoseconds(wait_time));
         ++i;
     }
-    // this_thread::sleep_for(chrono::nanoseconds(wait_time));
+    this_thread::sleep_for(chrono::nanoseconds(wait_time));
     cout << "Append Thread id : " << id << " was finished.\n" << endl; // <-- uncomment to display end append_s thread
     --num_append_working;
 }
@@ -86,10 +86,8 @@ void remove_(int id)
     }
     while (num_append_working != 0 || myringbuf.size() > 0)
     {
-        // xmutex.lock();
         remove_item(id);
         this_thread::sleep_for(chrono::nanoseconds(wait_time));
-        // xmutex.unlock();
     }
     cout << "Remove thread id : " << id << " was finished.\n" << endl;
 }
