@@ -74,6 +74,7 @@ void append_(int id)
         ++i;
     }
     // this_thread::sleep_for(chrono::nanoseconds(wait_time));
+    cout << "Append Thread id : " << id << " was finished.\n" << endl; // <-- uncomment to display end append_s thread
     --num_append_working;
 }
 
@@ -90,6 +91,7 @@ void remove_(int id)
         this_thread::sleep_for(chrono::nanoseconds(wait_time));
         // xmutex.unlock();
     }
+    cout << "Remove thread id : " << id << " was finished.\n" << endl;
 }
 int main()
 {
