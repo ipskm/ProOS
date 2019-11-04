@@ -7,7 +7,8 @@
         "stdio.h": "c",
         "iomanip": "cpp",
         "thread": "cpp",
-        "ostream": "cpp"
+        "ostream": "cpp",
+        "iostream": "cpp"
     },
     "git.ignoreLimitWarning": true
 }

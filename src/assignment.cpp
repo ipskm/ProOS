@@ -21,13 +21,12 @@
 //or using this include if you don't install boost libraly//
 #include "circular_buffer.hpp" //<- uncomment this line
 
-
 using namespace std;
 
 #define BUFFER_SIZE 1000
-#define REQUEST 500000
-#define PROD 1
-#define CONS 50
+#define REQUEST 100000
+#define PROD 20
+#define CONS 30
 
 int c_count = 0;
 int i = 0;
@@ -53,7 +52,7 @@ void remove_item(int remove_id)
 {
     unique_lock<mutex> lock(xmutex);
     int product;
-    if (is_not_empty.wait_for(lock, chrono::microseconds(wait_time),
+    if (is_not_empty.wait_for(lock, chrono::milliseconds(wait_time),
                               [] { return myringbuf.size() > 0; }))
     {
         product = myringbuf.front();
@@ -73,7 +72,7 @@ void append_(int id)
         // this_thread::sleep_for(chrono::nanoseconds(wait_time));
         ++i;
     }
-    this_thread::sleep_for(chrono::microseconds(wait_time));
+    this_thread::sleep_for(chrono::milliseconds(wait_time));
     // cout << "Append Thread id : " << id << " was finished." << endl; // <-- uncomment to display end append_s thread
     --num_append_working;
 }
@@ -87,7 +86,7 @@ void remove_(int id)
     while (num_append_working != 0 || myringbuf.size() > 0)
     {
         remove_item(id);
-        this_thread::sleep_for(chrono::microseconds(wait_time));
+        this_thread::sleep_for(chrono::milliseconds(wait_time));
     }
     // cout << "Remove thread id : " << id << " was finished." << endl;
 }
@@ -99,8 +98,11 @@ int main()
     ios_base::sync_with_stdio(false);
 
     // Start Producer Consumer Program //
-    vector<thread> producers_and_consumers;
-
+    cout << "Producer " << PROD
+         << " Comsumer " << CONS
+         << "\nBuffer Size " << BUFFER_SIZE
+         << "\nRequest " << REQUEST
+         << endl;
     vector<thread> vec_of_thread;
     for (int i = 0; i < PROD; i++)
     {
@@ -122,20 +124,14 @@ int main()
         chrono::duration_cast<chrono::nanoseconds>(end - start).count();
 
     time_taken *= 1e-9; // Chang nanosecond to second
-    if(c_count > REQUEST) c_count = REQUEST;
     double through_put = c_count / time_taken;
     double percentage = (c_count / REQUEST) * 100.0;
     string c_consume = to_string(c_count);
-    cout << "Producer " << PROD
-         << " Comsumer " << CONS
-         << "\nBuffer Size " << BUFFER_SIZE
-         << "\nRequest " << REQUEST
-         << endl;
     cout << "Success fully consume " << c_consume
          << " requests. (" << percentage
          << "%)" << endl;
-    cout << "Elapsed Time : " << fixed << time_taken
-         << setprecision(9) << " Seconds." << endl;
+    cout << "Elapsed Time : " << fixed << time_taken << setprecision(3)
+         << " Seconds." << endl;
     cout << "Throughput " << through_put << " request/s" << endl;
     return 0;
 }
