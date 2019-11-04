@@ -3,7 +3,7 @@
 ## การทดสอบรันโปรแกรม
 คอมไพล์เลอร์ : Genaral C++ Complier (eg. [MinGW W64](https://sourceforge.net/projects/mingw-w64/)) 
 ไลบราลี่ : [Boost C++ Libralies](https://www.boost.org/users/download/)
-คอมไพล์ : ```g++ src/assignment.cpp -pthread -lpthread -o assignment  ```
+คอมไพล์ : ```g++ src/assignment.cpp -pthread -lpthread -o assignment  ```  
 รันโปรแกรม : ```./assignment```
 ***
 ## การออกเเบบโปรเเกรม
