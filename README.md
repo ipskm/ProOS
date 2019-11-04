@@ -190,6 +190,4 @@ void remove_(int id)
 ## ผลการ Run & Result
 ***
 ![Flowchart](./img/result.png)
-## Source code 
-***
-thsis git repo
+
