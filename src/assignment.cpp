@@ -69,7 +69,6 @@ void append_(int id)
     while (i < REQUEST)
     {
         add_item(id);
-        // this_thread::sleep_for(chrono::nanoseconds(wait_time));
         ++i;
     }
     this_thread::sleep_for(chrono::milliseconds(wait_time));
